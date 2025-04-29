@@ -1,0 +1,154 @@
+package Trabalho;
+
+import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Main {
+    public static void main(String[] args) {
+        // Criação do Scanner e do DateFormat
+        Scanner scanner = new Scanner(System.in);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+        // Confere quem é o operador
+        System.out.println("===== Vendas =====");
+        
+        System.out.println("Nome do operador:");
+        String operador = scanner.nextLine();
+        
+        System.out.println("Matrícula do operador:");
+        String matricula = scanner.nextLine();
+
+        // Pegar dados do cliente
+        System.out.println("\nInforme os dados do cliente:");
+        System.out.println("Nome:");
+        String cliente = scanner.nextLine();
+        
+        System.out.println("CPF:");
+        String cpfCliente = scanner.nextLine();
+
+        // Dados da compra
+        String[] carrinho = new String[255];
+        double[] preco = new double[255];
+        int[] quantidade = new int[255];
+        int posicao = 0;
+
+        // Loop para adicionar item ao carrinho
+        while (true) {
+            System.out.println("\nDeseja adicionar produtos ao carrinho?");
+            System.out.println("[1] - Adicionar produto");
+            System.out.println("[2] - Imprimir nota fiscal");
+            int resposta = scanner.nextInt();
+            scanner.nextLine(); // Limpa o buffer
+
+            // Para adcionar produto
+            if (resposta == 1) {
+                System.out.println("\nDigite o nome do produto:");
+                carrinho[posicao] = scanner.nextLine();
+
+                System.out.println("Preço:");
+                preco[posicao] = scanner.nextDouble();
+
+                System.out.println("Quantidade:");
+                quantidade[posicao] = scanner.nextInt();
+                scanner.nextLine(); // Limpa o buffer
+                
+                posicao++;
+                System.out.println("\nProduto adicionado com sucesso!");
+
+            // Para sair do loop para imprimir a nota fiscal
+            } else if (resposta == 2) {
+                break;
+                
+            // Para garantir da resposta certa
+            } else {
+                System.out.println("Opção inválida. Tente novamente.");
+            }
+        }
+
+        // Variaveis para usar dentro do loop
+        double total = 0;
+        double desconto = 0;
+        String tipoPagamento = "";
+        
+        // Soma o preço total do carrinho (coloquei fora do loop pra não somar o preço toda hora que der "Opção invalida")
+        for (int c = 0; c < posicao; c++) {
+        	total += preco[c] * quantidade[c];
+        }
+        
+        // Loop para garantir a resposta válida no desconto
+        while (true) {
+	
+	        // Pergunta e recebe a forma de pagamento
+	        System.out.println("\nForma de pagamento:");
+	        System.out.println("1 - À vista (10% de desconto)");
+	        System.out.println("2 - A prazo (8% de desconto)");
+	        int pagamento = scanner.nextInt();
+	
+	        // Para a vista, a prazo ou opção invalida
+	        if (pagamento == 1) {
+	            desconto = total * 0.10;
+	            tipoPagamento = "À vista";
+	            break;
+	        } else if (pagamento == 2) {
+	            desconto = total * 0.08;
+	            tipoPagamento = "A prazo";
+	            break;
+	        } else {
+	            System.out.println("Forma de pagamento inválida. Insira uma forma de pagamento válida.");
+	        }
+        
+        }
+        
+        double totalComDesconto = total - desconto;
+        
+        // Calcula bônus do vendedor se a compra for acima de 1k
+        double bonusVendedor = 0;
+        if (total > 1000) {
+            bonusVendedor = total * 0.02;
+        }
+
+        // Impressão da Nota Fiscal
+        System.out.println("\n\n=============================================");
+        System.out.println("                NOTA FISCAL                ");
+        System.out.println("=============================================");
+        System.out.println("Data: " + dateFormat.format(new Date()));
+        
+        //Cliente
+        System.out.println("\n--- DADOS DO CLIENTE ---");
+        System.out.println("Nome: " + cliente);
+        System.out.println("CPF: " + cpfCliente);
+        
+        //Atendente
+        System.out.println("\n--- ATENDENTE ---");
+        System.out.println("Operador: " + operador);
+        System.out.println("Matrícula: " + matricula);
+        if (bonusVendedor > 0) {
+            System.out.printf("Bônus (2%%): R$ %.2f\n", bonusVendedor);
+        }
+        
+        //Carrinho
+        System.out.println("\n--- ITENS COMPRADOS ---");
+        System.out.printf("%-30s %-10s %-15s %-15s\n", "PRODUTO", "QTD", "PREÇO UNIT.", "TOTAL");
+        for (int i = 0; i < posicao; i++) {
+            double totalItem = preco[i] * quantidade[i];
+            System.out.printf("%-30s %-10d R$%-14.2f R$%-14.2f\n", 
+                            carrinho[i], quantidade[i], preco[i], totalItem);
+        }
+        
+        //Resumo total da compra
+        System.out.println("\n--- RESUMO DA COMPRA ---");
+        System.out.printf("TOTAL BRUTO: R$ %.2f\n", total);
+        System.out.printf("FORMA DE PAGAMENTO: %s\n", tipoPagamento);
+        System.out.printf("DESCONTO: R$ %.2f\n", desconto);
+        System.out.printf("TOTAL LÍQUIDO: R$ %.2f\n", totalComDesconto);
+        if (bonusVendedor > 0) {
+            System.out.printf("O vendedor %s receberá um bônus de R$ %.2f\n", operador, bonusVendedor);
+        }
+        System.out.println("=============================================");
+        System.out.println("Obrigado pela preferência. volte sempre!");
+        System.out.println("=============================================");
+        
+        scanner.close();
+    }
+}
